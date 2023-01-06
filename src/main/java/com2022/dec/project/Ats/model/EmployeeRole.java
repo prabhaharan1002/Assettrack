@@ -21,7 +21,7 @@ import lombok.ToString;
 public class EmployeeRole {
 
 	@Id
-	private int empRoleId;
+	private String id;
 	
 	private String empRole;
 }

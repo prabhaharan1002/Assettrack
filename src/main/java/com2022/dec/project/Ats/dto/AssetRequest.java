@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,14 +14,12 @@ import lombok.ToString;
 
 public class AssetRequest {
 	private Employee employee;
-	
-	
-	
+
 	private EmployeeRole employeeRole;
-	
-	public EmployeeRole FindAll( EmployeeRole empId) {
+
+	public EmployeeRole FindAll(EmployeeRole empId) {
 		return empId;
-		
+
 	}
 
 }

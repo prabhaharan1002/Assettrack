@@ -21,7 +21,6 @@ import com2022.dec.project.Ats.repository.EmployeeRepository;
 import com2022.dec.project.Ats.repository.EmployeeRoleRepository;
 import jakarta.validation.Valid;
 
-
 @RequestMapping("/api/employees/")
 @RestController
 public class EmployeeController {
@@ -32,16 +31,38 @@ public class EmployeeController {
 	@Autowired
 	private EmployeeRoleRepository employeeRoleRepository;
 
+	// @Autowired
+	// private MongoTemplate mongoTemplate;
+
 	/*
-	 *  Create a new employees
+	 * Create a new employees
 	 */
 	@PostMapping("/create")
 	public Employee createEmployee(@Valid @RequestBody Employee employee) {
+
+		/* Validate Employee Role in EmployeeRole collection */
+		String empRoleToAdd = employee.getEmpRole();
+		List<EmployeeRole> empRoleList = employeeRoleRepository.findEmployeeRole(empRoleToAdd);
+		boolean empRoleStatus = false;
+		for (EmployeeRole empRole : empRoleList) {
+			if (empRole.getEmpRole().equals(empRoleToAdd)) {
+				empRoleStatus = true;
+				break;
+			}
+		}
+
+		/* If the Employee Role not match with Role collection then Throw Exception */
+		if (!empRoleStatus) {
+			return null;
+		}
+
+		/* End */
+
 		String firstName = employee.getFirstName();
-		String lastName  = employee.getLastName();
-		int empid		 = employee.getEmpId();
+		String lastName = employee.getLastName();
+		int empid = employee.getEmpId();
 		System.out.println(empid);
-		employee.setDisplayName(firstName + " " + lastName);
+		employee.setDisplayName(firstName + "" + lastName);
 		String k = employee.getContactNo();
 		int c = k.length();
 		if (c == 10) {
@@ -49,11 +70,11 @@ public class EmployeeController {
 		} else {
 			return null;
 		}
-	
+
 	}
 
 	/*
-	 *  Create a new user along with asset (Auto Asset Assign)
+	 * Create a new user along with asset (Auto Asset Assign)
 	 */
 	@PostMapping("/assignrequest")
 	public Employee assignLaptop(@RequestBody AssetRequest request) {
@@ -70,12 +91,13 @@ public class EmployeeController {
 	// get employee by id rest api
 	@GetMapping("/findbyid/{empId}")
 	public ResponseEntity<Employee> getEmployeeById(@PathVariable int empId) {
+
 		Employee employee = employeeRepository.findById(empId).orElseThrow();
 		return ResponseEntity.ok(employee);
 	}
 
 	/*
-	 *  update employee rest api
+	 * update employee rest api
 	 */
 	@PutMapping("/update/{empId}")
 	public ResponseEntity<Employee> updateEmployee(@PathVariable int empId, @RequestBody Employee employeeDetails) {
@@ -94,7 +116,7 @@ public class EmployeeController {
 	}
 
 	/*
-	 *  delete employee rest api
+	 * delete employee rest api
 	 */
 	@DeleteMapping("/delete/{empId}")
 	public ResponseEntity<Map<String, Boolean>> deleteEmployee(@PathVariable Integer empId) {
@@ -104,17 +126,6 @@ public class EmployeeController {
 		Map<String, Boolean> response = new HashMap<>();
 		response.put("deleted", Boolean.TRUE);
 		return ResponseEntity.ok(response);
-	}
-
-	@PostMapping("/role/post")
-	public EmployeeRole createrole(@RequestBody EmployeeRole employeeRole) {
-
-		return employeeRoleRepository.save(employeeRole);
-	}
-
-	@GetMapping("/role")
-	public List<EmployeeRole> findrole() {
-		return employeeRoleRepository.findAll();
 	}
 
 }
